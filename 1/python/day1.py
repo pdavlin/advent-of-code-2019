@@ -1,3 +1,5 @@
+# I stole this from a guy on Reddit!
+
 from pathlib import Path
 import math
 p = Path('../input.txt')
@@ -13,5 +15,5 @@ def part1(lines):
 def part2(lines):
     return sum(mass for line in lines for mass in fuels(int(line)))
 
-finalSum = part2(lines);
+finalSum = part2(lines)
 print(finalSum)
