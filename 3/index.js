@@ -1,15 +1,12 @@
 import input from './input';
-
 const getInput = () => {
   const instructionSets = input.split('\n');
   return instructionSets;
 };
-
 const intersection = a => {
   const s = new Set(a[1]);
   return a[0].filter(x => s.has(x));
 };
-
 const evaluateWireMeasurement = measurementSet => {
   let pos = [0, 0];
   let mvts = measurementSet.split(',');
@@ -51,34 +48,44 @@ const evaluateWireMeasurement = measurementSet => {
   });
   return steps;
 };
-
+const calculateMinimumDirectDistance = ints => {
+  let minDist = null;
+  for (let match of ints) {
+    const matches = match.split(',').map(Number);
+    let distance = Math.abs(matches[0]) + Math.abs(matches[1]);
+    if (minDist === null || distance < minDist) {
+      minDist = distance;
+    }
+  }
+  return minDist;
+};
+const calculateMinimumWirePathDistance = (ints, positionLists) => {
+  let minDist = null;
+  ints.forEach(match => {
+    let distance =
+      Number(indexOfAll(positionLists[0], match)) +
+      Number(indexOfAll(positionLists[1], match)) +
+      2;
+    if (minDist === null || distance < minDist) {
+      minDist = distance;
+    }
+  });
+  return minDist;
+};
 const indexOfAll = (arr, val) =>
   arr.reduce((acc, el, i) => (el === val ? [...acc, i] : acc), []);
 export default {
-  part1: () => {
-    let positionLists = getInput().map(n => evaluateWireMeasurement(n));
-    let ints = intersection(positionLists);
-    let minDist = null;
-    for (let match of ints) {
-      const matches = match.split(',').map(Number);
-      let distance = Math.abs(matches[0]) + Math.abs(matches[1]);
-      if (minDist === null || distance < minDist) {
-        minDist = distance;
-      }
-    }
-    return minDist;
-  },
+  part1: () =>
+    getInput()
+      .map(n => evaluateWireMeasurement(n))
+      .reduce((pv, cv, ci, a) => intersection(a))
+      .reduce((p, c, i, a) => calculateMinimumDirectDistance(a)),
   part2: () => {
     let positionLists = getInput().map(n => evaluateWireMeasurement(n));
-    let ints = intersection(positionLists);
-    let minDist = null;
-    ints.forEach(match => {
-      const matches = match.split(',').map(Number);
-      let distance = Number(indexOfAll(positionLists[0], match)) + Number(indexOfAll(positionLists[1], match)) + 2;
-      if (minDist === null || distance < minDist) {
-        minDist = distance;
-      }
-    });
-    return minDist;
+    return positionLists
+      .reduce((p, c, i, a) => intersection(a))
+      .reduce((p, c, i, a) =>
+        calculateMinimumWirePathDistance(a, positionLists)
+      );
   }
 };
