@@ -3,10 +3,6 @@ const getInput = () => {
   const instructionSets = input.split('\n');
   return instructionSets;
 };
-const intersection = a => {
-  const s = new Set(a[1]);
-  return a[0].filter(x => s.has(x));
-};
 const evaluateWireMeasurement = measurementSet => {
   let pos = [0, 0];
   let mvts = measurementSet.split(',');
@@ -48,7 +44,12 @@ const evaluateWireMeasurement = measurementSet => {
   });
   return steps;
 };
-const calculateMinimumDirectDistance = ints => {
+const intersection = a => {
+  const s = new Set(a[1]);
+  return a[0].filter(x => s.has(x));
+};
+const calculateMinimumDirectDistance = positionLists => {
+  let ints = intersection(positionLists);
   let minDist = null;
   for (let match of ints) {
     const matches = match.split(',').map(Number);
@@ -59,7 +60,8 @@ const calculateMinimumDirectDistance = ints => {
   }
   return minDist;
 };
-const calculateMinimumWirePathDistance = (ints, positionLists) => {
+const calculateMinimumWirePathDistance = positionLists => {
+  const ints = intersection(positionLists);
   let minDist = null;
   ints.forEach(match => {
     let distance =
@@ -76,16 +78,11 @@ const indexOfAll = (arr, val) =>
   arr.reduce((acc, el, i) => (el === val ? [...acc, i] : acc), []);
 export default {
   part1: () =>
-    getInput()
-      .map(n => evaluateWireMeasurement(n))
-      .reduce((pv, cv, ci, a) => intersection(a))
-      .reduce((p, c, i, a) => calculateMinimumDirectDistance(a)),
-  part2: () => {
-    let positionLists = getInput().map(n => evaluateWireMeasurement(n));
-    return positionLists
-      .reduce((p, c, i, a) => intersection(a))
-      .reduce((p, c, i, a) =>
-        calculateMinimumWirePathDistance(a, positionLists)
-      );
-  }
+    calculateMinimumDirectDistance(
+      getInput().map(n => evaluateWireMeasurement(n))
+    ),
+  part2: () =>
+    calculateMinimumWirePathDistance(
+      getInput().map(n => evaluateWireMeasurement(n))
+    )
 };
